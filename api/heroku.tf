@@ -7,6 +7,7 @@ variable "papertrail_url" {}
 variable "database_url" {}
 variable "region" { default = "us" }
 variable "auth0" { type = "map" }
+variable "aws" { type = "map" }
 
 output "appId" {
   value = "${heroku_app.api.id}"
@@ -28,12 +29,14 @@ resource "heroku_app" "api" {
 
   config_vars = {
     MAIL_HOST = "smtp.sendgrid.net"
-    S3_BUCKET_REGION = "us-east-1"
     NODE_ENV = "${var.env}"
     DATABASE_URL = "${var.database_url}"
-    AUTH0_DOMAIN="${var.auth0["domain"]}"
-    AUTH0_CLIENT_ID="${var.auth0["clientId"]}"
-    AUTH0_CLIENT_SECRET="${var.auth0["clientSecret"]}"
+    AUTH0_DOMAIN = "${var.auth0["domain"]}"
+    AUTH0_CLIENT_ID = "${var.auth0["clientId"]}"
+    AUTH0_CLIENT_SECRET = "${var.auth0["clientSecret"]}"
+    AWS_BUCKET = "${var.aws["bucket"]}"
+    AWS_ACCESS_KEY_ID = "${var.aws["access_key_id"]}"
+    AWS_SECRET_ACCESS_KEY = "${var.aws["secret_access_key"]}"
   }
 }
 

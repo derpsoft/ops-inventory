@@ -8,8 +8,19 @@ variable "databaseUrl" { type = "map" }
 variable "auth0" { type = "map" }
 
 provider "heroku" {}
-provider "aws" {}
+provider "aws" {
+  region = "us-east-1"
+}
 provider "cloudflare" {}
+
+module "dev_bucket" {
+  source = "./bucket"
+
+  app = "${var.app}-dev-${var.salt["dev"]}"
+  client = "${var.client}"
+  organization = "${var.organization}"
+  env = "development"
+}
 
 module "dev_site" {
   source = "./web"
@@ -32,6 +43,12 @@ module "dev_api" {
   papertrail_url = "${var.papertrailUrl}"
   database_url = "${var.databaseUrl["dev"]}"
   auth0 = "${var.auth0}"
+  aws {
+    bucket = "${module.dev_bucket.bucket}"
+    access_key_id = "${module.dev_bucket.access_key_id}"
+    secret_access_key = "${module.dev_bucket.secret_access_key}"
+    region = "${module.dev_bucket.region}"
+  }
 }
 
 module "sta_site" {

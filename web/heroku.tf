@@ -3,12 +3,15 @@ variable "client" {}
 variable "organization" {}
 variable "slack_webhook" {}
 variable "env" {}
-variable "salt" {}
 variable "region" { default = "us" }
+
+output "appId" {
+  value = "${heroku_app.web.id}"
+}
 
 # APP
 resource "heroku_app" "web" {
-  name = "${var.app}-web-${var.env}-${var.salt}"
+  name = "${var.app}"
   region = "${var.region}"
 
   organization {
@@ -18,7 +21,8 @@ resource "heroku_app" "web" {
 
   config_vars = {
     NODE_ENV = "${var.env}"
-    NPM_CONFIG_PRODUCTION = false
+    NPM_CONFIG_PRODUCTION = "false"
+    NODE_MODULES_CACHE = "false"
   }
 }
 
